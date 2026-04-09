@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>NutriMind · App de prevención alimentaria</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Fuente cute y redondeada -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f9f7f5;  /* fondo suave tipo papel */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Contenedor principal estilo "cute" */
+        .app-container {
+            max-width: 420px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 48px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0,0,0,0.02);
+            overflow: hidden;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        /* Header con gradiente pastel y emojis */
+        .app-header {
+            background: linear-gradient(125deg, #A7E0D0, #7EC8B3);
+            color: white;
+            padding: 28px 22px 24px 22px;
+            position: relative;
+            overflow: hidden;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+        }
+
+        .app-header::after {
+            content: "🍎🥑🍓🥗🌸";
+            font-size: 80px;
+            position: absolute;
+            bottom: -20px;
+            right: -15px;
+            opacity: 0.2;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .app-header h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .greeting {
+            font-size: 1rem;
+            margin-top: 8px;
+            font-weight: 500;
+            background: rgba(255,255,240,0.2);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Scroll suave */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 18px;
+            scroll-behavior: smooth;
+        }
+
+        /* Navegación inferior tipo "burbuja" */
+        .bottom-nav {
+            background: #ffffff;
+            border-top: 2px solid #f0ebe5;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 12px 18px;
+            border-radius: 32px 32px 0 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #b2afa9;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 6px 12px;
+            border-radius: 40px;
+        }
+
+        .nav-item i {
+            font-size: 1.6rem;
+        }
+
+        .nav-item.active {
+            color: #6BB8A2;
+            background: #F2F9F6;
+            transform: translateY(-3px);
+        }
+
+        /* Tarjetas redondeadas y con sombra suave */
+        .card {
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f3efe9;
+            transition: all 0.2s;
+        }
+
+        .card-title {
+            font-weight: 800;
+            font-size: 1.25rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #3A5E4F;
+        }
+
+        /* Botones estilo "cute" */
+        .btn-primary {
+            background: #FFB347;
+            background: linear-gradient(95deg, #FFB347, #FF9F2E);
+            border: none;
+            color: white;
+            font-weight: 700;
+            padding: 12px 20px;
+            border-radius: 60px;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(255, 160, 60, 0.2);
+            transition: 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: scale(0.96);
+            background: linear-gradient(95deg, #FFA133, #FF9015);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-outline {
+            background: #F9F4EF;
+            border: 1.5px solid #EADBCE;
+            border-radius: 60px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            color: #5C7C6B;
+            transition: 0.2s;
+        }
+
+        /* Support options */
+        .support-option {
+            background: #FEF9F2;
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 18px;
+            border-left: 8px solid #FFC48A;
+        }
+
+        .support-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .support-buttons button {
+            background: white;
+            border: 1px solid #ffe0b5;
+            border-radius: 60px;
+            padding: 8px 14px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.1s;
+        }
+
+        /* Semáforo */
+        .semaphore {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .light {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #E8E2D9;
+            transition: all 0.2s;
+        }
+
+        .light.green { background: #A2D9A3; box-shadow: 0 0 12px #A2D9A3; }
+        .light.yellow { background: #FFE08C; box-shadow: 0 0 12px #FFE08C; }
+        .light.red { background: #FFB3B3; box-shadow: 0 0 12px #FFB3B3; }
+
+        /* Alertas */
+        .alert-banner {
+            background: #FFF2DF;
+            border-left: 6px solid #FFB347;
+            padding: 12px 16px;
+            border-radius: 24px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .hidden { display: none; }
+
+        /* Chat */
+        .chat-messages {
+            background: #FDF9F4;
+            border-radius: 28px;
+            padding: 14px;
+            height: 150px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+        }
+
+        .msg .bubble {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 24px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .msg.user .bubble {
+            background: #FFC48A;
+            color: #4A3B2C;
+        }
+
+        .msg.bot .bubble {
+            background: #EDE6DD;
+            color: #4A3B2C;
+        }
+
+        /* Carrusel */
+        .carousel-container {
+            background: #FEF7E9;
+            border-radius: 36px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .carousel-slide {
+            display: none;
+            padding: 20px;
+            text-align: center;
+            animation: fade 0.4s;
+        }
+
+        .carousel-slide.active { display: block; }
+
+        .carousel-slide img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin: 10px auto;
+        }
+
+        .carousel-btn {
+            background: #FFB347;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 8px 6px;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            background: #DDD2C4;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 0 4px;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: #FFB347;
+            width: 22px;
+        }
+
+        /* Recordatorios y notas */
+        .reminder-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 12px 0;
+            background: #FDF7F0;
+            padding: 10px 12px;
+            border-radius: 60px;
+        }
+
+        .notes-area {
+            width: 100%;
+            border-radius: 28px;
+            border: 1px solid #F0E4D8;
+            padding: 12px;
+            font-family: 'Nunito', sans-serif;
+            background: #FFFCF9;
+        }
+
+        .quote-card {
+            background: #FFFAF0;
+            border-radius: 32px;
+            padding: 16px;
+            text-align: center;
+            font-style: italic;
+            font-weight: 600;
+            color: #8B6B4A;
+            margin-bottom: 18px;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #FFE3C2;
+        }
+
+        /* Inputs y selects */
+        input, select, textarea {
+            font-family: 'Nunito', sans-serif;
+            border-radius: 60px;
+            border: 1px solid #EADBCE;
+            padding: 10px 16px;
+            background: #FFFDFB;
+        }
+
+        /* Ancho fijo para elementos */
+        .habit-row select {
+            width: auto;
+            min-width: 70px;
+        }
+
+        @keyframes fade {
+            from { opacity: 0.4; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="appRoot"></div>
+
+<script>
+    // ==================== GESTIÓN DE DATOS (misma lógica funcional) ====================
+    const STORAGE_KEY = 'nutrimind_profile';
+    const INST_EMAILS_KEY = 'nutrimind_institution_emails';
+    const HABIT_LOGS_KEY = 'nutrimind_habit_logs';
+    const NOTES_KEY = 'nutrimind_notes';
+    const REMINDER_KEY = 'nutrimind_reminder_tasks';
+
+    function getProfile() {
+        const profile = localStorage.getItem(STORAGE_KEY);
+        return profile ? JSON.parse(profile) : null;
+    }
+    function saveProfile(profileData) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profileData));
+    }
+    function getInstitutionEmails() {
+        const emails = localStorage.getItem(INST_EMAILS_KEY);
+        return emails ? JSON.parse(emails) : { bienestar: '', psicologia: '', nutricion: '' };
+    }
+    function saveInstitutionEmails(emails) {
+        localStorage.setItem(INST_EMAILS_KEY, JSON.stringify(emails));
+    }
+    function getHabitLogs() {
+        const logs = localStorage.getItem(HABIT_LOGS_KEY);
+        return logs ? JSON.parse(logs) : [];
+    }
+    function saveHabitLog(log) {
+        let logs = getHabitLogs();
+        logs.push(log);
+        if (logs.length > 30) logs.shift();
+        localStorage.setItem(HABIT_LOGS_KEY, JSON.stringify(logs));
+    }
+    function getNotes() {
+        return localStorage.getItem(NOTES_KEY) || "";
+    }
+    function saveNotes(notes) {
+        localStorage.setItem(NOTES_KEY, notes);
+    }
+    function getReminderTasks() {
+        const tasks = localStorage.getItem(REMINDER_KEY);
+        if (!tasks) return { date: new Date().toDateString(), tasks: { habit: false, quote: false, meal: false } };
+        return JSON.parse(tasks);
+    }
+    function saveReminderTasks(tasksObj) {
+        localStorage.setItem(REMINDER_KEY, JSON.stringify(tasksObj));
+    }
+
+    // Frases motivadoras
+    const motivationalQuotes = [
+        "🌸 Tu cuerpo es un jardín, cuídalo con amor.", "🍎 Cada bocado consciente es un acto de autocuidado.", "💖 No necesitas dietas extremas, necesitas equilibrio.", "🌿 Eres más que un número en la balanza.", "✨ Pequeños hábitos, grandes cambios.", "🥗 Comer bien es una forma de quererte.", "🧘‍♀️ Escucha a tu cuerpo, él sabe lo que necesita.", "🍫 Permitirte un gusto también es salud mental.", "🌟 Brilla sin compararte con nadie.", "💪 La comida es energía, no un castigo."
+    ];
+    function getRandomQuote() { return motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]; }
+
+    // Pantalla de creación de perfil (cute)
+    function renderProfileScreen() {
+        return `
+            <div class="app-header">
+                <h1><i class="fas fa-seedling"></i> NutriMind <span>✨</span></h1>
+                <p>¡Completa tu perfil y empecemos!</p>
+                <div style="text-align:center; margin-top:6px;">🍏🍊🥗🐣</div>
+            </div>
+            <div class="main-content">
+                <div class="card">
+                    <div class="card-title"><i class="fas fa-id-card"></i> Datos personales</div>
+                    <div class="profile-field"><label>Nombre *</label><input type="text" id="profileName" placeholder="Ej: Martita"></div>
+                    <div class="profile-field"><label>Edad *</label><input type="number" id="profileAge" placeholder="16-18 años" min="12" max="25"></div>
+                    <div class="profile-field"><label>Género (opcional)</label><select id="profileGender"><option value="">Prefiero no decirlo</option><option value="femenino">Femenino</option><option value="masculino">Masculino</option><option value="otro">Otro</option></select></div>
+                    <div class="profile-field"><label>Institución educativa</label><input type="text" id="profileSchool" placeholder="Nombre del colegio"></div>
+                    <div class="profile-field"><label>Hábitos iniciales</label><select id="profileHabits"><option value="balanceado">Suelo comer balanceado 🥗</option><option value="a_veces">A veces salto comidas ⏩</option><option value="frecuente">Frecuentemente como ultraprocesados 🍔</option></select></div>
+                    <button class="btn-primary" id="saveProfileBtn">✨ ¡Guardar y empezar! ✨</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Pantalla principal con todas las funcionalidades y diseño cute
+    function renderMainApp(profile) {
+        const nombre = profile.nombre || "usuario";
+        const currentQuote = getRandomQuote();
+        const savedNotes = getNotes();
+        const reminderTasks = getReminderTasks();
+        const isToday = reminderTasks.date === new Date().toDateString();
+        const tasks = reminderTasks.tasks;
+        return `
+            <div class="app-header">
+                <h1><i class="fas fa-heart"></i> NutriMind</h1>
+                <div class="greeting">🌸 Hola, ${nombre} 🌸</div>
+                <p>Prevención con mucho amor</p>
+                <div style="font-size:12px; margin-top:6px;">🍎✨ come feliz, siéntete radiante ✨🍎</div>
+            </div>
+            <div class="main-content" id="mainContent">
+                <div id="globalAlertContainer"></div>
+                <div id="view-home" class="view">
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-clipboard-list"></i> Tu bienestar hoy</div>
+                        <button class="btn-primary" id="quickTestBtn"><i class="fas fa-play"></i> Autoevaluación</button>
+                        <button class="btn-outline" id="habitGoBtn"><i class="fas fa-chart-line"></i> Registrar hábitos</button>
+                        <div class="fun-fact" style="background:#FCF2E5; border-radius:20px; padding:10px; margin-top:12px;"><i class="fas fa-lightbulb"></i> Tip: ¡Reír libera endorfinas y ayuda a tu digestión!</div>
+                    </div>
+                    
+                    <!-- Frase motivadora -->
+                    <div class="quote-card" id="motivationalQuoteCard">
+                        <i class="fas fa-star" style="color:#FFB347;"></i> <span id="quoteText">${currentQuote}</span><br>
+                        <span style="font-size:11px;">👉 toca para nueva frase</span>
+                    </div>
+                    
+                    <!-- Recordatorios diarios -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-bell"></i> Recordatorios diarios ⏰</div>
+                        <div class="reminder-checkbox"><input type="checkbox" id="remindHabit" ${isToday && tasks.habit ? 'checked' : ''}> <label>✅ Registrar mis hábitos hoy</label></div>
+                        <div class="reminder-checkbox"><input type="checkbox" id="remindQuote" ${isToday && tasks.quote ? 'checked' : ''}> <label>📖 Leer una frase motivadora</label></div>
+                        <div class="reminder-checkbox"><input type="checkbox" id="remindMeal" ${isToday && tasks.meal ? 'checked' : ''}> <label>🍽️ Comer sin pantallas (mindful eating)</label></div>
+                        <button class="btn-outline" id="saveReminderBtn">Guardar progreso del día</button>
+                        <p id="reminderMessage" style="font-size:12px; margin-top:8px;"></p>
+                    </div>
+                    
+                    <!-- Estadísticas -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-chart-bar"></i> Estadísticas de hábitos</div>
+                        <div id="statsContainer" class="stats-bar" style="background:#F7F2EA; border-radius:24px; padding:12px;">Cargando...</div>
+                        <img src="https://img.icons8.com/color/48/000000/positive-dynamic.png" style="width:40px; margin:8px auto 0; display:block;">
+                    </div>
+                    
+                    <!-- Notas personales -->
+                    <div class="card">
+                        <div class="card-title"><i class="fas fa-pen-alt"></i> Mis notas 💭</div>
+                        <textarea id="notesArea" class="notes-area" rows="3" placeholder="Escribe aquí tus pensamientos, metas o lo que sientes...">${savedNotes}</textarea>
+                        <button class="btn-primary" id="saveNotesBtn">Guardar notas</button>
+                    </div>
+                    
+                    <div class="card" id="lastTestResultCard">
+                        <div class="card-title"><i class="fas fa-chart-simple"></i> Última evaluación</div>
+                        <p id="lastTestMsg">Aún no has realizado el test.</p>
+                        <img src="https://img.icons8.com/color/96/000000/healthy-eating.png" style="width:60px; margin-top:8px; opacity:0.7;">
+                    </div>
+                </div>
+                
+                <!-- Vista test -->
+                <div id="view-test" class="view hidden">
+                    <div class="card"><div class="card-title"><i class="fas fa-notes-medical"></i> Autoevaluación</div><div id="testQuestions"></div><button class="btn-primary" id="submitTestBtn">Enviar y obtener resultado</button><div id="testResultArea" style="margin-top:16px;"></div></div>
+                </div>
+                <!-- Vista hábitos -->
+                <div id="view-habits" class="view hidden">
+                    <div class="card"><div class="card-title"><i class="fas fa-utensils"></i> Seguimiento diario 🍽️</div>
+                        <div class="habit-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">Comidas: <select id="mealsCount"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5+</option></select></div>
+                        <div class="habit-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">Frutas/verduras: <select id="fruitVeg"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5+</option></select></div>
+                        <div class="habit-row" style="display:flex; justify-content:space-between; margin-bottom:10px;">Ultraprocesados: <select id="ultraProcessed"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4+</option></select></div>
+                        <button class="btn-primary" id="saveHabitsBtn">Guardar y ver semáforo</button>
+                        <div class="semaphore" id="trafficLights"><div class="light" id="lightGreen"></div><div class="light" id="lightYellow"></div><div class="light" id="lightRed"></div></div>
+                        <p id="habitFeedback" style="text-align:center;">Registra tus hábitos</p><div id="habitAlertMsg" class="alert-banner hidden"></div>
+                    </div>
+                </div>
+                <!-- Vista educación con carrusel mejorado -->
+                <div id="view-education" class="view hidden">
+                    <div class="card"><div class="card-title"><i class="fas fa-graduation-cap"></i> Aprende sin dietas 🎓</div>
+                        <div id="educCarousel" class="carousel-container"></div><div class="carousel-dots" id="carouselDots"></div>
+                        <div style="display:flex; justify-content:center; gap:12px;"><button class="carousel-btn" id="prevSlideBtn"><i class="fas fa-chevron-left"></i> Anterior</button><button class="carousel-btn" id="nextSlideBtn">Siguiente <i class="fas fa-chevron-right"></i></button></div>
+                    </div>
+                </div>
+                <!-- Vista apoyo -->
+                <div id="view-support" class="view hidden">
+                    <div class="card"><div class="card-title"><i class="fas fa-headset"></i> Canal de soporte 🤝</div>
+                        <p>Espacio seguro y confidencial. Elige una opción:</p>
+                        <div class="support-option"><h3><i class="fas fa-apple-alt"></i> 🥗 Nutricionista</h3><p>Consultas sobre hábitos alimentarios.</p><div class="support-buttons"><button onclick="window.supportAction('nutri-chat')"><i class="fas fa-comment-dots"></i> Chat</button><button onclick="window.supportAction('nutri-cita')"><i class="fas fa-calendar-alt"></i> Cita virtual</button><button onclick="window.supportAction('nutri-faq')"><i class="fas fa-question-circle"></i> FAQ</button></div></div>
+                        <div class="support-option"><h3><i class="fas fa-brain"></i> 🧠 Apoyo psicológico</h3><p>Imagen corporal, ansiedad alimentaria.</p><div class="support-buttons"><button onclick="window.supportAction('psico-chat')"><i class="fas fa-comment-dots"></i> Chat</button><button onclick="window.supportAction('psico-cita')"><i class="fas fa-calendar-alt"></i> Cita</button><button onclick="window.supportAction('psico-acompañamiento')"><i class="fas fa-heart"></i> Mensaje</button></div></div>
+                        <div class="support-option"><h3><i class="fas fa-school"></i> 🏫 Orientación institucional</h3><p>Bienestar estudiantil, talleres.</p><div class="support-buttons"><button onclick="window.supportAction('inst-bienestar')"><i class="fas fa-hand-holding-heart"></i> Bienestar</button><button onclick="window.supportAction('inst-talleres')"><i class="fas fa-chalkboard-user"></i> Talleres</button><button onclick="window.supportAction('inst-linea')"><i class="fas fa-phone-alt"></i> Línea ayuda</button></div></div>
+                        <div class="institution-email-section" style="background:#FDF3E8; border-radius:24px; padding:12px; margin-top:12px;">
+                            <h4><i class="fas fa-envelope"></i> Contacto institucional (editable)</h4>
+                            <div class="email-input-group"><input type="email" id="emailBienestar" placeholder="bienestar@colegio.edu"><button class="small-btn" style="background:#FFB347; border-radius:40px;" id="saveEmailBienestar">Guardar</button></div>
+                            <div class="email-input-group"><input type="email" id="emailPsicologia" placeholder="psicologia@colegio.edu"><button class="small-btn" style="background:#FFB347;" id="saveEmailPsicologia">Guardar</button></div>
+                            <div class="email-input-group"><input type="email" id="emailNutricion" placeholder="nutricion@colegio.edu"><button class="small-btn" style="background:#FFB347;" id="saveEmailNutricion">Guardar</button></div>
+                        </div>
+                        <hr style="margin:16px 0;">
+                        <div id="supportChatArea"><div class="chat-messages" id="supportChatMessages"><div class="msg bot"><div class="bubble">🍬 ¡Hola! Soy tu asistente. ¿Necesitas correos institucionales?</div></div></div><div class="chat-input"><input type="text" id="supportChatInput" placeholder="Escribe tu mensaje..."><button id="sendSupportChatBtn" class="btn-primary" style="width: auto;">Enviar</button></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-item active" data-view="home"><i class="fas fa-home"></i><span>Inicio</span></button>
+                <button class="nav-item" data-view="test"><i class="fas fa-brain"></i><span>Test</span></button>
+                <button class="nav-item" data-view="habits"><i class="fas fa-chart-line"></i><span>Hábitos</span></button>
+                <button class="nav-item" data-view="education"><i class="fas fa-book-open"></i><span>Aprende</span></button>
+                <button class="nav-item" data-view="support"><i class="fas fa-headset"></i><span>Apoyo</span></button>
+            </div>
+        `;
+    }
+
+    // ==================== LÓGICA COMPLETA (igual funcional pero con el nuevo diseño) ====================
+    let currentSlide = 0;
+    let slidesData = [
+        { title: "🍎 Mitos vs Realidad", content: "Saltarse comidas NO adelgaza, ralentiza el metabolismo.", img: "https://img.icons8.com/color/96/000000/apple.png" },
+        { title: "🧠 Metabolismo y estudio", content: "Comer equilibrado mejora memoria y concentración.", img: "https://img.icons8.com/color/96/000000/brain.png" },
+        { title: "💖 Autoestima y redes", content: "Tu valor no depende de un like. Eres única/o.", img: "https://img.icons8.com/color/96/000000/instagram.png" },
+        { title: "🥑 Alimentación intuitiva", content: "Come cuando tengas hambre, para cuando estés satisfecho.", img: "https://img.icons8.com/color/96/000000/avocado.png" },
+        { title: "🏃‍♀️ Muévete feliz", content: "Bailar, saltar, jugar: 30 min diarios liberan endorfinas.", img: "https://img.icons8.com/color/96/000000/dancing.png" },
+        { title: "😴 Dormir bien", content: "8 horas ayudan a regular el hambre.", img: "https://img.icons8.com/color/96/000000/sleep.png" },
+        { title: "💧 Hidratación", content: "2 litros de agua mejoran tu energía.", img: "https://img.icons8.com/color/96/000000/water.png" }
+    ];
+
+    function buildCarousel() {
+        const container = document.getElementById('educCarousel');
+        if(!container) return;
+        let slidesHtml = '';
+        slidesData.forEach((slide, idx) => {
+            slidesHtml += `<div class="carousel-slide" data-index="${idx}"><img src="${slide.img}" alt="icono"><h3>${slide.title}</h3><p>${slide.content}</p></div>`;
+        });
+        container.innerHTML = slidesHtml;
+        const dotsContainer = document.getElementById('carouselDots');
+        if(dotsContainer) {
+            dotsContainer.innerHTML = '';
+            slidesData.forEach((_, i) => {
+                const dot = document.createElement('span');
+                dot.classList.add('dot');
+                if(i === currentSlide) dot.classList.add('active');
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            });
+        }
+        goToSlide(0);
+    }
+    function goToSlide(index) {
+        const slides = document.querySelectorAll('.carousel-slide');
+        if(!slides.length) return;
+        slides.forEach(slide => slide.classList.remove('active'));
+        slides[index]?.classList.add('active');
+        currentSlide = index;
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, i) => { if(i === index) dot.classList.add('active'); else dot.classList.remove('active'); });
+    }
+    function nextSlide() { goToSlide((currentSlide + 1) % slidesData.length); }
+    function prevSlide() { goToSlide((currentSlide - 1 + slidesData.length) % slidesData.length); }
+
+    function initAppLogic() {
+        const views = { home: document.getElementById('view-home'), test: document.getElementById('view-test'), habits: document.getElementById('view-habits'), education: document.getElementById('view-education'), support: document.getElementById('view-support') };
+        const navBtns = document.querySelectorAll('.nav-item');
+        const globalAlertContainer = document.getElementById('globalAlertContainer');
+        function showView(viewId) {
+            Object.keys(views).forEach(key => views[key]?.classList.add('hidden'));
+            if(views[viewId]) views[viewId].classList.remove('hidden');
+            navBtns.forEach(btn => { if(btn.dataset.view === viewId) btn.classList.add('active'); else btn.classList.remove('active'); });
+            if(viewId === 'education') buildCarousel();
+            if(viewId === 'test') renderTestQuestions();
+            if(viewId === 'home') { updateStatsDisplay(); updateReminderUI(); }
+        }
+        const testQuestions = [
+            { text: "¿Con qué frecuencia te saltas comidas?", options: ["Nunca","Rara vez","A veces","Frecuentemente"] },
+            { text: "¿Has seguido dietas restrictivas sin supervisión?", options: ["Nunca","Una vez","Varias veces","Constantemente"] },
+            { text: "¿Te preocupa excesivamente tu peso o figura?", options: ["Nada","Poco","Moderadamente","Mucho"] },
+            { text: "¿Las redes sociales afectan negativamente tu imagen corporal?", options: ["No influye","Poco","Bastante","Muchísimo"] }
+        ];
+        function renderTestQuestions() {
+            const container = document.getElementById('testQuestions');
+            if(!container) return;
+            let html = '';
+            testQuestions.forEach((q, idx) => {
+                html += `<div style="margin-bottom:15px;"><strong>${idx+1}. ${q.text}</strong><div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:5px;">`;
+                q.options.forEach((opt, optIdx) => { html += `<label><input type="radio" name="q${idx}" value="${optIdx}"> ${opt}</label>`; });
+                html += `</div></div>`;
+            });
+            container.innerHTML = html;
+        }
+        function computeRisk() {
+            let total = 0;
+            for(let i=0; i<testQuestions.length; i++) {
+                let selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if(!selected) return null;
+                total += parseInt(selected.value);
+            }
+            if(total <= 3) return 'low';
+            if(total <= 6) return 'medium';
+            return 'high';
+        }
+        function displayTestResult(risk) {
+            const area = document.getElementById('testResultArea');
+            let msg = risk==='low'?'✅ Riesgo bajo: ¡súper! Sigue así.': risk==='medium'?'⚠️ Riesgo medio: puedes mejorar.':'🔴 Riesgo alto: busca apoyo profesional.';
+            area.innerHTML = `<div class="alert-banner">${msg}</div>`;
+            localStorage.setItem('nutriRisk', risk);
+            updateHomeAlerts();
+            if(risk === 'high') showGlobalAlert("🔔 Alerta: test con riesgo alto. Usa el canal de apoyo.");
+        }
+        function evaluateHabits(meals, fruits, ultra) {
+            if(meals <= 1 || ultra >= 3) return 'red';
+            if(meals < 3 || fruits < 2 || ultra > 2) return 'yellow';
+            return 'green';
+        }
+        function updateTrafficLightUI(level) {
+            const g = document.getElementById('lightGreen'), y = document.getElementById('lightYellow'), r = document.getElementById('lightRed');
+            if(g && y && r) { [g,y,r].forEach(l => l.classList.remove('green','yellow','red'));
+            if(level === 'green') g.classList.add('green');
+            else if(level === 'yellow') y.classList.add('yellow');
+            else if(level === 'red') r.classList.add('red'); }
+        }
+        function saveHabits() {
+            const meals = parseInt(document.getElementById('mealsCount').value);
+            const fruits = parseInt(document.getElementById('fruitVeg').value);
+            const ultra = parseInt(document.getElementById('ultraProcessed').value);
+            const risk = evaluateHabits(meals, fruits, ultra);
+            updateTrafficLightUI(risk);
+            let feedback = risk==='green'?'🟢 ¡Excelente! Sigue así': risk==='yellow'?'🟡 Puedes mejorar, intenta más frutas':'🔴 Riesgo, contacta apoyo';
+            document.getElementById('habitFeedback').innerHTML = feedback;
+            const alertDiv = document.getElementById('habitAlertMsg');
+            if(risk === 'red') { alertDiv.classList.remove('hidden'); alertDiv.innerHTML = '⚠️ Alerta: hábitos en riesgo. ¡Usa soporte!'; showGlobalAlert("🚨 Tus hábitos necesitan atención."); }
+            else alertDiv.classList.add('hidden');
+            saveHabitLog({ date: new Date().toISOString(), meals, fruits, ultra, risk });
+            showGlobalAlert("📊 ¡Hábitos guardados! Revisa tus estadísticas.");
+            updateStatsDisplay();
+            const reminder = getReminderTasks();
+            if(reminder.date === new Date().toDateString()) reminder.tasks.habit = true;
+            else { reminder.date = new Date().toDateString(); reminder.tasks = { habit: true, quote: reminder.tasks?.quote || false, meal: reminder.tasks?.meal || false }; }
+            saveReminderTasks(reminder);
+            updateReminderUI();
+        }
+        function updateStatsDisplay() {
+            const logs = getHabitLogs();
+            if(logs.length === 0) { document.getElementById('statsContainer').innerHTML = "Aún no hay datos. Registra hábitos."; return; }
+            const last7 = logs.slice(-7);
+            const green = last7.filter(l => l.risk === 'green').length;
+            const yellow = last7.filter(l => l.risk === 'yellow').length;
+            const red = last7.filter(l => l.risk === 'red').length;
+            document.getElementById('statsContainer').innerHTML = `📅 Últimos 7 días:<br>🟢 Verde: ${green}  🟡 Amarillo: ${yellow}  🔴 Rojo: ${red}<br>🍽️ Promedio comidas: ${(last7.reduce((a,b)=>a+b.meals,0)/last7.length).toFixed(1)}`;
+        }
+        function updateHomeAlerts() {
+            const risk = localStorage.getItem('nutriRisk');
+            const msgElem = document.getElementById('lastTestMsg');
+            if(msgElem) {
+                if(risk === 'high') msgElem.innerHTML = '⚠️ Riesgo alto - busca apoyo en el canal de soporte. 💙';
+                else if(risk === 'medium') msgElem.innerHTML = '🟡 Riesgo medio - revisa el semáforo nutricional.';
+                else if(risk === 'low') msgElem.innerHTML = '✅ Riesgo bajo - sigue fortaleciendo hábitos. 🎉';
+                else msgElem.innerHTML = 'Aún no has realizado el test. ¡Anímate!';
+            }
+        }
+        function showGlobalAlert(message) {
+            if(!globalAlertContainer) return;
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert-banner';
+            alertDiv.innerHTML = `<i class="fas fa-bell"></i> ${message} <button style="float:right; background:none; border:none; font-weight:bold;" onclick="this.parentElement.remove()">✖</button>`;
+            globalAlertContainer.prepend(alertDiv);
+            setTimeout(() => alertDiv.remove(), 8000);
+        }
+        function updateReminderUI() {
+            const reminder = getReminderTasks();
+            const isToday = reminder.date === new Date().toDateString();
+            const tasks = reminder.tasks;
+            const habitChk = document.getElementById('remindHabit');
+            const quoteChk = document.getElementById('remindQuote');
+            const mealChk = document.getElementById('remindMeal');
+            if(habitChk) habitChk.checked = isToday && tasks.habit;
+            if(quoteChk) quoteChk.checked = isToday && tasks.quote;
+            if(mealChk) mealChk.checked = isToday && tasks.meal;
+        }
+        function saveReminderTasksUI() {
+            const habit = document.getElementById('remindHabit').checked;
+            const quote = document.getElementById('remindQuote').checked;
+            const meal = document.getElementById('remindMeal').checked;
+            saveReminderTasks({ date: new Date().toDateString(), tasks: { habit, quote, meal } });
+            document.getElementById('reminderMessage').innerHTML = "✅ Progreso guardado. ¡Sigue así!";
+            setTimeout(() => document.getElementById('reminderMessage').innerHTML = "", 2000);
+            if(habit && meal) showGlobalAlert("🎉 ¡Buen trabajo completando tus recordatorios!");
+        }
+        function saveNotes() { saveNotesText(document.getElementById('notesArea').value); showGlobalAlert("📝 Notas guardadas."); }
+        function saveNotesText(notes) { localStorage.setItem(NOTES_KEY, notes); }
+        function refreshQuote() {
+            document.getElementById('quoteText').innerText = getRandomQuote();
+            const reminder = getReminderTasks();
+            if(reminder.date === new Date().toDateString()) reminder.tasks.quote = true;
+            else { reminder.date = new Date().toDateString(); reminder.tasks = { habit: false, quote: true, meal: false }; }
+            saveReminderTasks(reminder);
+            updateReminderUI();
+        }
+        const emailsStore = getInstitutionEmails();
+        function updateEmailInputs() {
+            document.getElementById('emailBienestar').value = emailsStore.bienestar || '';
+            document.getElementById('emailPsicologia').value = emailsStore.psicologia || '';
+            document.getElementById('emailNutricion').value = emailsStore.nutricion || '';
+        }
+        updateEmailInputs();
+        document.getElementById('saveEmailBienestar')?.addEventListener('click', () => { emailsStore.bienestar = document.getElementById('emailBienestar').value; saveInstitutionEmails(emailsStore); addSupportMessage('bot', `📧 Correo bienestar: ${emailsStore.bienestar}`); });
+        document.getElementById('saveEmailPsicologia')?.addEventListener('click', () => { emailsStore.psicologia = document.getElementById('emailPsicologia').value; saveInstitutionEmails(emailsStore); addSupportMessage('bot', `📧 Correo psicología: ${emailsStore.psicologia}`); });
+        document.getElementById('saveEmailNutricion')?.addEventListener('click', () => { emailsStore.nutricion = document.getElementById('emailNutricion').value; saveInstitutionEmails(emailsStore); addSupportMessage('bot', `📧 Correo nutrición: ${emailsStore.nutricion}`); });
+        window.supportAction = function(action) {
+            let msg = "";
+            switch(action) {
+                case 'nutri-chat': msg = "🧑‍⚕️ Nutricionista: " + (emailsStore.nutricion || "Correo no configurado"); break;
+                case 'nutri-cita': msg = "📅 Solicitud de cita virtual enviada."; break;
+                case 'nutri-faq': msg = "❓ ¿Saltarse comidas? No es recomendable."; break;
+                case 'psico-chat': msg = "🧠 Psicólogo: Escribe a " + (emailsStore.psicologia || "psicologia@institucion.com"); break;
+                case 'psico-cita': msg = "📅 Cita psicológica solicitada."; break;
+                case 'psico-acompañamiento': msg = "💬 Mensaje: Respira, eres valiosa/o."; break;
+                case 'inst-bienestar': msg = "🏫 Bienestar: " + (emailsStore.bienestar || "bienestar@colegio.edu"); break;
+                case 'inst-talleres': msg = "📚 Taller: Autoestima y redes."; break;
+                case 'inst-linea': msg = "📞 Línea ayuda: 800-123-4567"; break;
+                default: msg = "Solicitud recibida.";
+            }
+            addSupportMessage("bot", msg);
+        };
+        function addSupportMessage(sender, text) {
+            const chatDiv = document.getElementById('supportChatMessages');
+            if(!chatDiv) return;
+            const msgDiv = document.createElement('div'); msgDiv.className = `msg ${sender}`; msgDiv.innerHTML = `<div class="bubble">${text}</div>`;
+            chatDiv.appendChild(msgDiv); chatDiv.scrollTop = chatDiv.scrollHeight;
+        }
+        function botSupportReply(userMsg) {
+            const lower = userMsg.toLowerCase();
+            if(lower.includes("correo")) return `📧 Correos: Bienestar ${emailsStore.bienestar || 'no'}, Psicología ${emailsStore.psicologia || 'no'}, Nutrición ${emailsStore.nutricion || 'no'}`;
+            if(lower.includes("gracias")) return "¡De nada! Cuida de ti 💚";
+            return "Puedo ayudarte con nutrición, psicología o correos. ¿Qué necesitas?";
+        }
+        document.getElementById('quickTestBtn')?.addEventListener('click', () => showView('test'));
+        document.getElementById('habitGoBtn')?.addEventListener('click', () => showView('habits'));
+        document.getElementById('submitTestBtn')?.addEventListener('click', () => { const risk = computeRisk(); if(risk) displayTestResult(risk); else alert("Responde todas."); });
+        document.getElementById('saveHabitsBtn')?.addEventListener('click', saveHabits);
+        document.getElementById('sendSupportChatBtn')?.addEventListener('click', () => { const input = document.getElementById('supportChatInput'); const msg = input.value.trim(); if(!msg) return; addSupportMessage('user', msg); input.value = ''; setTimeout(() => addSupportMessage('bot', botSupportReply(msg)), 300); });
+        document.getElementById('prevSlideBtn')?.addEventListener('click', prevSlide);
+        document.getElementById('nextSlideBtn')?.addEventListener('click', nextSlide);
+        document.getElementById('saveReminderBtn')?.addEventListener('click', saveReminderTasksUI);
+        document.getElementById('saveNotesBtn')?.addEventListener('click', saveNotes);
+        document.getElementById('motivationalQuoteCard')?.addEventListener('click', refreshQuote);
+        navBtns.forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+        showView('home');
+        renderTestQuestions();
+        updateHomeAlerts();
+        updateTrafficLightUI(null);
+        updateStatsDisplay();
+        if(document.getElementById('educCarousel')) buildCarousel();
+    }
+
+    function bootstrap() {
+        const profile = getProfile();
+        const root = document.getElementById('appRoot');
+        if(!profile) {
+            root.innerHTML = renderProfileScreen();
+            document.getElementById('saveProfileBtn').addEventListener('click', () => {
+                const nombre = document.getElementById('profileName').value.trim();
+                const edad = document.getElementById('profileAge').value;
+                if(!nombre || !edad) { alert("Nombre y edad obligatorios"); return; }
+                saveProfile({ nombre, edad: parseInt(edad), genero: document.getElementById('profileGender').value, institucion: document.getElementById('profileSchool').value.trim() || "No especificada", habitosIniciales: document.getElementById('profileHabits').value, fechaRegistro: new Date().toISOString() });
+                bootstrap();
+            });
+        } else {
+            root.innerHTML = renderMainApp(profile);
+            initAppLogic();
+        }
+    }
+    bootstrap();
+</script>
+</body>
+</html>
